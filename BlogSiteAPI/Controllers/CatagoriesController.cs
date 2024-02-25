@@ -57,5 +57,30 @@ namespace BlogSite.API.Controllers
 
             //run the api using the http run button at the top of visual studio, it will open swagger and the application run can be checked
         }
+
+        //GET for all categories in the database
+        //https://localhost:7013/api/Catagories
+        [HttpGet]
+        public async Task<IActionResult> GetAllCategories()
+        {
+            //create a definition in the interface and an implementation
+            //go to Repositories folder, open ICategoryRepository.cs
+            var categories = await categoryRepository.GetAllAsync();
+
+            //map domain model to dto
+            var response = new List<CategoryDTO>();
+
+            foreach (var category in categories) 
+            {
+                response.Add(new CategoryDTO
+                {
+                    Id = category.Id,
+                    Name = category.Name,
+                    UrlHandle = category.UrlHandle,
+                });
+            }
+
+            return Ok(response);
+        }
     }
 }

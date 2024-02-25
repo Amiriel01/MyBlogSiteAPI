@@ -24,5 +24,11 @@ namespace BlogSite.API.Repositories.Implementation
 
             return category;
         }
+
+        public async Task<IEnumerable<Category>> GetAllAsync()
+        {
+            //method that returns all of the categories in the list
+            return await dbContext.Categories.ToListAsync();
+        }
     }
 }
