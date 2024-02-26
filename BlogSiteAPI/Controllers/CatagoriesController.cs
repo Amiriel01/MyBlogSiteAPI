@@ -32,7 +32,8 @@ namespace BlogSite.API.Controllers
         [HttpPost]
         //define method, pass the Direct Transfer Object (DTO) to the CreateCatagory() method
         //request is the name because it is what the user is sending the api
-        public async Task<IActionResult> CreateCategory(CreateCategoryRequestDTO request)
+        //adding [FromBody] lets me know that the info will be coming from the body
+        public async Task<IActionResult> CreateCategory([FromBody]CreateCategoryRequestDTO request)
         {
             // Map DTO to Domain Model (DM)
             var category = new Category
@@ -79,6 +80,36 @@ namespace BlogSite.API.Controllers
                     UrlHandle = category.UrlHandle,
                 });
             }
+
+            return Ok(response);
+        }
+
+        //https://localhost:7013/api/Catagories/{id}
+        //define method
+        [HttpGet]
+        //define the route
+        [Route("{id:Guid}")]
+        //the parameter in GetCategoryById is a Guid with the name id
+        //adding [FromRoute] lets me know that the info will be coming from a parameter
+        public async Task<IActionResult> GetCategoryById([FromRoute]Guid id)
+        {
+            //first go to ICategoryRepository.cs and create the interface for the method
+            //next go to CategoryRepository.cs and inplement the interface
+            //then come back here and write the logic for the method
+            var existingCategory = await categoryRepository.GetById(id);
+
+            if (existingCategory is null)
+            {
+                return NotFound();
+            }
+
+            //if it is found convert it to a DTO
+            var response = new CategoryDTO
+            {
+                Id = existingCategory.Id,
+                Name = existingCategory.Name,
+                UrlHandle = existingCategory.UrlHandle,
+            };
 
             return Ok(response);
         }

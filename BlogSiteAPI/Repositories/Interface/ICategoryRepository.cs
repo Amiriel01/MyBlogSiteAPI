@@ -11,5 +11,8 @@ namespace BlogSite.API.Repositories.Interface
         //after creating the task go to CategoryRepository.cs and add implement the interface
         Task<IEnumerable<Category>> GetAllAsync();
 
+        //if a category is found return it, if it is not found will return null
+        Task<Category?> GetById(Guid id);
+
     }
 }

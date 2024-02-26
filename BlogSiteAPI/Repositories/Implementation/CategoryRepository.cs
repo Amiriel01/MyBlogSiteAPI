@@ -30,5 +30,11 @@ namespace BlogSite.API.Repositories.Implementation
             //method that returns all of the categories in the list
             return await dbContext.Categories.ToListAsync();
         }
+
+        public async Task<Category?> GetById(Guid id)
+        {
+            //use dbContext.Categories.FirstOrDefaultAsync x is what is returned x.id is the id of what is returned, if it equals the expeced id item found or null
+           return await dbContext.Categories.FirstOrDefaultAsync(x => x.Id == id);
+        }
     }
 }
