@@ -113,5 +113,59 @@ namespace BlogSite.API.Controllers
 
             return Ok(response);
         }
+
+        //https://localhost:7013/api/Catagories/{id}
+        //define method
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDTO request)
+        {
+            //convert DTO to DM
+            var category = new Category
+            {
+                Id = id,
+                Name = request.Name,
+                UrlHandle = request.UrlHandle,
+            };
+
+           category = await categoryRepository.UpdateAsync(category);
+
+           if (category == null)
+            {
+                return NotFound();
+            }
+
+            //Convert DM to DTO
+            var response = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle,
+            };
+
+            return Ok(response);
+        }
+
+        //https://localhost:7013/api/Catagories/{id}
+        [HttpDelete]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
+        {
+            var category = await categoryRepository.DeleteAsync(id);
+            if (category is null)
+            {
+                return NotFound();
+            }
+
+            //Convert DM to DTO
+            var response = new CategoryDTO
+            {
+                Id = category.Id,
+                Name = category.Name,
+                UrlHandle = category.UrlHandle,
+            };
+
+            return Ok(response);
+        }
     }
 }

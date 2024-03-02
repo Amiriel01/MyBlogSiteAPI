@@ -14,5 +14,9 @@ namespace BlogSite.API.Repositories.Interface
         //if a category is found return it, if it is not found will return null
         Task<Category?> GetById(Guid id);
 
+       Task<Category?> UpdateAsync(Category category);
+
+        Task<Category?> DeleteAsync(Guid id);
+
     }
 }
