@@ -20,5 +20,9 @@
         public string Author { get; set; }
 
         public bool IsVisible { get; set; }
+
+        //one blog post can have multiple categories 
+        //this represents the relation between the categories and the blog post
+        public ICollection<Category> Categories { get; set; }
     }
 }

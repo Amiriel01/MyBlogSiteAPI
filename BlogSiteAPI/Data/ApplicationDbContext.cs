@@ -18,5 +18,16 @@ namespace BlogSite.API.Data
         public DbSet<BlogPost> BlogPosts { get; set; }
 
         public DbSet<Category> Categories { get; set; }
+
+        protected override void OnModelCreating(ModelBuilder modelBuilder)
+        {
+            base.OnModelCreating(modelBuilder);
+
+            // Configure many-to-many relationship between BlogPost and Category
+            modelBuilder.Entity<BlogPost>()
+                .HasMany(bp => bp.Categories)
+                .WithMany(c => c.BlogPosts)
+                .UsingEntity(j => j.ToTable("BlogPostCategory"));
+        }
     }
 }

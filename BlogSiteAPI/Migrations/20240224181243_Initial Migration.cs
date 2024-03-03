@@ -36,7 +36,7 @@ namespace BlogSite.API.Migrations
                 {
                     Id = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    UrlHangle = table.Column<string>(type: "nvarchar(max)", nullable: false)
+                    UrlHandle = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {

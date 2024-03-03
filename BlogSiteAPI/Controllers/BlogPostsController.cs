@@ -11,10 +11,13 @@ namespace BlogSite.API.Controllers
     public class BlogPostsController : ControllerBase
     {
         private readonly IBlogPostRepository blogPostRepository;
+        private readonly ICategoryRepository categoryRepository;
 
-        public BlogPostsController(IBlogPostRepository blogPostRepository)
+        public BlogPostsController(IBlogPostRepository blogPostRepository, 
+            ICategoryRepository categoryRepository)
         {
             this.blogPostRepository = blogPostRepository;
+            this.categoryRepository = categoryRepository;
         }
 
         //POST: {apibaseurl}/api/blogposts
@@ -32,9 +35,21 @@ namespace BlogSite.API.Controllers
                 PublishedDate = requst.PublishedDate,
                 ShortDescription = requst.ShortDescription,
                 UrlHandle = requst.UrlHandle,
+                Categories = new List<Category>()
             };
 
+            //loop through categories
+            foreach (var categoryGuid in requst.Categories)
+            {
+                var existingCategory = await categoryRepository.GetById(categoryGuid);
+                if (existingCategory != null)
+                {
+                    blogPost.Categories.Add(existingCategory);
+                }
+            }
+
             blogPost = await blogPostRepository.CreateAsync(blogPost);
+
             //convert DM to DTO
             var response = new BlogPostDTO
             {
@@ -47,6 +62,12 @@ namespace BlogSite.API.Controllers
                 PublishedDate = blogPost.PublishedDate,
                 ShortDescription = blogPost.ShortDescription,
                 UrlHandle = blogPost.UrlHandle,
+                Categories = blogPost.Categories.Select(x => new CategoryDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle,
+                }).ToList()
             };
 
             return Ok(response);
