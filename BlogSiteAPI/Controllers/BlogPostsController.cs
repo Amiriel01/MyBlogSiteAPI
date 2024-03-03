@@ -17,6 +17,7 @@ namespace BlogSite.API.Controllers
             this.blogPostRepository = blogPostRepository;
         }
 
+        //POST: {apibaseurl}/api/blogposts
         [HttpPost]
         public async Task<IActionResult> CreateBlogPost([FromBody]CreateBlogPostRequestDTO requst)
         {
@@ -47,6 +48,32 @@ namespace BlogSite.API.Controllers
                 ShortDescription = blogPost.ShortDescription,
                 UrlHandle = blogPost.UrlHandle,
             };
+
+            return Ok(response);
+        }
+
+        //GET: {apibaseurl}api/blogposts
+        [HttpGet]
+        public async Task<IActionResult> GetAllBlogPosts()
+        {
+            var blogPosts = await blogPostRepository.GetAllAsync();
+            //Convert to DTO
+            var response = new List<BlogPostDTO>();
+            foreach (var blogPost in blogPosts)
+            {
+                response.Add(new BlogPostDTO
+                {
+                    Id = blogPost.Id,
+                    Author = blogPost.Author,
+                    Title = blogPost.Title,
+                    Content = blogPost.Content,
+                    BlogImageUrl = blogPost.BlogImageUrl,
+                    PublishedDate = blogPost.PublishedDate,
+                    ShortDescription = blogPost.ShortDescription,
+                    UrlHandle = blogPost.UrlHandle,
+                    IsVisible=blogPost.IsVisible,
+                });
+            }
 
             return Ok(response);
         }
