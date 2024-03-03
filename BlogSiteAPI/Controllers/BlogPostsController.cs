@@ -104,5 +104,39 @@ namespace BlogSite.API.Controllers
 
             return Ok(response);
         }
+
+        //GET: {apiBaseUrl}/api/blogposts/{id}
+        [HttpGet]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> GetBlogPostById([FromRoute] Guid id)
+        {
+            //Get the blog post from the repository
+            var blogPost = await blogPostRepository.GetByIdAsync(id);
+            if (blogPost == null)
+            {
+                return NotFound();
+            }
+
+            //convert DM to DTO
+            var response = new BlogPostDTO
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                BlogImageUrl = blogPost.BlogImageUrl,
+                PublishedDate = blogPost.PublishedDate,
+                ShortDescription = blogPost.ShortDescription,
+                UrlHandle = blogPost.UrlHandle,
+                IsVisible = blogPost.IsVisible,
+                Categories = blogPost.Categories.Select(x => new CategoryDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle,
+                }).ToList()
+            };
+            return Ok(response);
+        }
     }
 }
