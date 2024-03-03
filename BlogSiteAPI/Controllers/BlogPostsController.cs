@@ -93,6 +93,12 @@ namespace BlogSite.API.Controllers
                     ShortDescription = blogPost.ShortDescription,
                     UrlHandle = blogPost.UrlHandle,
                     IsVisible=blogPost.IsVisible,
+                    Categories = blogPost.Categories.Select(x => new CategoryDTO
+                    {
+                        Id = x.Id,
+                        Name = x.Name,
+                        UrlHandle = x.UrlHandle,
+                    }).ToList()
                 });
             }
 
