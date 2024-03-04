@@ -1,4 +1,5 @@
-﻿using BlogSite.API.Models.Domain;
+﻿using Azure.Core;
+using BlogSite.API.Models.Domain;
 using BlogSite.API.Models.DTO;
 using BlogSite.API.Repositories.Interface;
 using Microsoft.AspNetCore.Http;
@@ -22,24 +23,24 @@ namespace BlogSite.API.Controllers
 
         //POST: {apibaseurl}/api/blogposts
         [HttpPost]
-        public async Task<IActionResult> CreateBlogPost([FromBody]CreateBlogPostRequestDTO requst)
+        public async Task<IActionResult> CreateBlogPost([FromBody]CreateBlogPostRequestDTO request)
         {
             //convert DTO to DM
             var blogPost = new BlogPost
             {
-                Author = requst.Author,
-                Title = requst.Title,
-                Content = requst.Content,
-                BlogImageUrl = requst.BlogImageUrl,
-                IsVisible = requst.IsVisible,
-                PublishedDate = requst.PublishedDate,
-                ShortDescription = requst.ShortDescription,
-                UrlHandle = requst.UrlHandle,
+                Author = request.Author,
+                Title = request.Title,
+                Content = request.Content,
+                BlogImageUrl = request.BlogImageUrl,
+                IsVisible = request.IsVisible,
+                PublishedDate = request.PublishedDate,
+                ShortDescription = request.ShortDescription,
+                UrlHandle = request.UrlHandle,
                 Categories = new List<Category>()
             };
 
             //loop through categories
-            foreach (var categoryGuid in requst.Categories)
+            foreach (var categoryGuid in request.Categories)
             {
                 var existingCategory = await categoryRepository.GetById(categoryGuid);
                 if (existingCategory != null)
@@ -136,6 +137,67 @@ namespace BlogSite.API.Controllers
                     UrlHandle = x.UrlHandle,
                 }).ToList()
             };
+            return Ok(response);
+        }
+
+        //PUT: {apiBaseUrl}/api/blogposts/{id}
+        [HttpPut]
+        [Route("{id:Guid}")]
+        public async Task<IActionResult> UpdateBlogPostById([FromRoute] Guid id, UpdateBlogPostRequestDTO request)
+        {
+            //Convert DTO to DM
+            var blogPost = new BlogPost
+            {
+                Id = id,
+                Author = request.Author,
+                Title = request.Title,
+                Content = request.Content,
+                BlogImageUrl = request.BlogImageUrl,
+                IsVisible = request.IsVisible,
+                PublishedDate = request.PublishedDate,
+                ShortDescription = request.ShortDescription,
+                UrlHandle = request.UrlHandle,
+                Categories = new List<Category>()
+            };
+
+            //loop through categories from request
+            foreach (var categoryGuid in request.Categories)
+            {
+                var existingCategory = await categoryRepository.GetById(categoryGuid);
+                if (existingCategory != null)
+                {
+                    blogPost.Categories.Add(existingCategory);
+                }
+            }
+
+            //Call repository to update blog post domain model
+            var updatedBlogPost = await blogPostRepository.UpdateAsync(blogPost);
+
+            if (updatedBlogPost == null) 
+            {
+                return NotFound();
+            }
+
+            //convert DM back to DTO
+            var response = new BlogPostDTO
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                BlogImageUrl = blogPost.BlogImageUrl,
+                PublishedDate = blogPost.PublishedDate,
+                ShortDescription = blogPost.ShortDescription,
+                UrlHandle = blogPost.UrlHandle,
+                IsVisible = blogPost.IsVisible,
+                Categories = blogPost.Categories.Select(x => new CategoryDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle,
+                }).ToList()
+            };
+
             return Ok(response);
         }
     }
