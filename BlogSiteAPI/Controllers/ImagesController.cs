@@ -17,6 +17,31 @@ namespace BlogSite.API.Controllers
             this.imageRepository = imageRepository;
         }
 
+        //GET: {apribaseurl}/api/Images
+        [HttpGet]
+        public async Task<IActionResult> GetAllImages()
+        {
+            //image repository to get all images
+            var images = await imageRepository.GetAll();
+
+            //convert DM to DTO
+            var response = new List<BlogImageDTO>();
+            foreach (var image in images)
+            {
+                response.Add(new BlogImageDTO
+                {
+                    Id = image.Id,
+                    Title = image.Title,
+                    DateCreated = image.DateCreated,
+                    FileExtension = image.FileExtension,
+                    FileName = image.FileName,
+                    Url = image.Url,
+                });
+            }
+
+            return Ok(response);
+        }
+
         //POST: {apibaseurl}/api/Images
         [HttpPost]
         public async Task<IActionResult> UploadImage([FromForm] IFormFile file, [FromForm] string fileName, [FromForm] string title)

@@ -1,6 +1,7 @@
 ﻿using BlogSite.API.Data;
 using BlogSite.API.Models.Domain;
 using BlogSite.API.Repositories.Interface;
+using Microsoft.EntityFrameworkCore;
 using Microsoft.Identity.Client;
 using Microsoft.IdentityModel.Tokens;
 
@@ -18,7 +19,12 @@ namespace BlogSite.API.Repositories.Implementation
             this.httpContextAccessor = httpContextAccessor;
             this.dbContext = dbContext;
         }
-        
+
+        public async Task<IEnumerable<BlogImage>> GetAll()
+        {
+            return await dbContext.BlogImages.ToListAsync();
+        }
+
         public async Task<BlogImage> Upload(IFormFile file, BlogImage blogImage)
         {
             
