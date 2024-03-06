@@ -19,6 +19,8 @@ namespace BlogSite.API.Data
 
         public DbSet<Category> Categories { get; set; }
 
+        public DbSet<BlogImage> BlogImages { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
@@ -28,6 +30,9 @@ namespace BlogSite.API.Data
                 .HasMany(bp => bp.Categories)
                 .WithMany(c => c.BlogPosts)
                 .UsingEntity(j => j.ToTable("BlogPostCategory"));
+
+            modelBuilder.Entity<Category>()
+                .Property(c => c.Name).HasMaxLength(200);
         }
     }
 }
