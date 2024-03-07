@@ -8,7 +8,7 @@ namespace BlogSite.API.Data
     public class ApplicationDbContext : DbContext
     {
         //constructor for the ApplicationDbContext class
-        public ApplicationDbContext(DbContextOptions options) : base(options)
+        public ApplicationDbContext(DbContextOptions<ApplicationDbContext> options) : base(options)
         {
         }
 

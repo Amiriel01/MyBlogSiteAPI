@@ -2,6 +2,7 @@
 using BlogSite.API.Models.Domain;
 using BlogSite.API.Models.DTO;
 using BlogSite.API.Repositories.Interface;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -62,6 +63,7 @@ namespace BlogSite.API.Controllers
         //GET for all categories in the database
         //https://localhost:7013/api/Catagories
         [HttpGet]
+        [Authorize]
         public async Task<IActionResult> GetAllCategories()
         {
             //create a definition in the interface and an implementation

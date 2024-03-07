@@ -1,8 +1,11 @@
 using BlogSite.API.Data;
 using BlogSite.API.Repositories.Implementation;
 using BlogSite.API.Repositories.Interface;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.FileProviders;
+using Microsoft.IdentityModel.Tokens;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -14,8 +17,16 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
-//injecting the ApllicationDbContext class in the Program folder so it can be used later inside controllers and repositories
+//injecting the ApplicationDbContext class in the Program folder so it can be used later inside controllers and repositories
 builder.Services.AddDbContext<ApplicationDbContext>(options =>
+{
+    //give the db options here, tell entity framework core to use the sql server
+    //use the connection string name found in the appsettings.json file
+    options.UseSqlServer(builder.Configuration.GetConnectionString("BlogSiteConnectionString"));
+});
+
+//injecting the AuthDbContext class in the Program folder so it can be used later inside controllers and repositories
+builder.Services.AddDbContext<AuthDbContext>(options =>
 {
     //give the db options here, tell entity framework core to use the sql server
     //use the connection string name found in the appsettings.json file
@@ -26,6 +37,41 @@ builder.Services.AddDbContext<ApplicationDbContext>(options =>
 builder.Services.AddScoped<ICategoryRepository, CategoryRepository>();
 builder.Services.AddScoped<IBlogPostRepository, BlogPostRepository>();
 builder.Services.AddScoped<IImageRepository, ImageRepository>();
+
+//define identity core roles
+builder.Services.AddIdentityCore<IdentityUser>()
+    .AddRoles<IdentityRole>()
+    .AddTokenProvider<DataProtectorTokenProvider<IdentityUser>>("BlogSite")
+    .AddEntityFrameworkStores<AuthDbContext>()
+    .AddDefaultTokenProviders();
+
+//define password rule options
+builder.Services.Configure<IdentityOptions>(options =>
+{
+    options.Password.RequireDigit = false;
+    options.Password.RequireLowercase = false;
+    options.Password.RequireNonAlphanumeric = false;
+    options.Password.RequireUppercase = false;
+    options.Password.RequiredLength = 6;
+    options.Password.RequiredUniqueChars = 1;
+});
+
+//define authentication
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer(options =>
+    {
+        options.TokenValidationParameters = new TokenValidationParameters
+        {
+            AuthenticationType = "Jwt",
+            ValidateIssuer = true,
+            ValidateAudience = true,
+            ValidateLifetime = true,
+            ValidateIssuerSigningKey = true,
+            ValidIssuer = builder.Configuration["Jwt:Issuer"],
+            ValidAudience = builder.Configuration["Jwt:Audience"],
+            IssuerSigningKey = new SymmetricSecurityKey(System.Text.Encoding.UTF8.GetBytes(builder.Configuration["Jwt:Key"]))
+        };
+    });
 
 var app = builder.Build();
 
@@ -46,6 +92,7 @@ app.UseCors(options =>
     options.AllowAnyMethod();
 });
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.UseStaticFiles(new StaticFileOptions
