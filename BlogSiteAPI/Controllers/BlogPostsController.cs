@@ -137,6 +137,43 @@ namespace BlogSite.API.Controllers
                     UrlHandle = x.UrlHandle,
                 }).ToList()
             };
+
+            return Ok(response);
+        }
+
+        //GET: {apibaseurl}/api/blogPosts/{urlhandle}
+        [HttpGet]
+        [Route("{urlHandle}")]
+        public async Task<IActionResult> GetBlogPostByUrlHandle([FromRoute] string urlHandle)
+        {
+            //get blogpost details from repository
+           var blogPost = await blogPostRepository.GetByUrlHandleAsync(urlHandle);
+
+            if (blogPost == null)
+            {
+                return NotFound();
+            }
+
+            //convert DM to DTO
+            var response = new BlogPostDTO
+            {
+                Id = blogPost.Id,
+                Author = blogPost.Author,
+                Title = blogPost.Title,
+                Content = blogPost.Content,
+                BlogImageUrl = blogPost.BlogImageUrl,
+                PublishedDate = blogPost.PublishedDate,
+                ShortDescription = blogPost.ShortDescription,
+                UrlHandle = blogPost.UrlHandle,
+                IsVisible = blogPost.IsVisible,
+                Categories = blogPost.Categories.Select(x => new CategoryDTO
+                {
+                    Id = x.Id,
+                    Name = x.Name,
+                    UrlHandle = x.UrlHandle,
+                }).ToList()
+            };
+
             return Ok(response);
         }
 
