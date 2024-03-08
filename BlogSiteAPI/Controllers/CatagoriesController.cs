@@ -31,6 +31,7 @@ namespace BlogSite.API.Controllers
         //route to post method
         //create a post http attribute
         [HttpPost]
+        [Authorize(Roles = "Writer")]
         //define method, pass the Direct Transfer Object (DTO) to the CreateCatagory() method
         //request is the name because it is what the user is sending the api
         //adding [FromBody] lets me know that the info will be coming from the body
@@ -63,7 +64,6 @@ namespace BlogSite.API.Controllers
         //GET for all categories in the database
         //https://localhost:7013/api/Catagories
         [HttpGet]
-        [Authorize]
         public async Task<IActionResult> GetAllCategories()
         {
             //create a definition in the interface and an implementation
@@ -120,6 +120,7 @@ namespace BlogSite.API.Controllers
         //define method
         [HttpPut]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> EditCategory([FromRoute] Guid id, UpdateCategoryRequestDTO request)
         {
             //convert DTO to DM
@@ -151,6 +152,7 @@ namespace BlogSite.API.Controllers
         //https://localhost:7013/api/Catagories/{id}
         [HttpDelete]
         [Route("{id:Guid}")]
+        [Authorize(Roles = "Writer")]
         public async Task<IActionResult> DeleteCategory([FromRoute] Guid id)
         {
             var category = await categoryRepository.DeleteAsync(id);
