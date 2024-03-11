@@ -92,6 +92,7 @@ GET Endpoints do not require authorization or authentication. All others require
 ### Built With
 
 * [![C#][C#.io]][C#-url]
+* [![JWT][JWT.io]][JWT-url]
 * [![NET][NET.io]][NET-url]
 * [![SQL][SQL.io]][SQL-url]
 * [![VS][VS.io]][VS-url]
