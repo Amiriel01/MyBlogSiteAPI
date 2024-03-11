@@ -2,7 +2,6 @@
 
 <br />
 <div align="center">
-  <img src="/READMEImages/logo.PNG" alt="Logo" width="100" height="100">
 <h3 align="center">My Blog Site API</h3>
 
   <p align="center">
