@@ -8,7 +8,7 @@
      C#, Entity Framework Core, ASP.NET, SQL REST API to be used with My Blog Site UI
     <br />
 <!--     <a href="https://blogsite-8fced.web.app/" target="_blank">View Demo</a> -->
-    ·
+<!--     · -->
     <a href="https://github.com/Amiriel01/BlogSiteUI/issues" target="_blank">Report Bug</a>
     ·
     <a href="https://github.com/Amiriel01/BlogSiteUI/issues" target="_blank">Suggestions</a>
